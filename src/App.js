@@ -1,25 +1,48 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import Pokedex from './components/pokedex';
+
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  const [pokemon, setPokemon] = React.useState({});
+  const [id, setId] = React.useState(1);
+
+  React.useEffect(() => {
+    Carregar();
+  }, [id]);
+
+  function Reduzir() {
+    setId(id - 1);
+    if (id <= 1) {
+      setId(1);
+    }
+  }
+  function Adicionar() {
+    setId(id + 1);
+    Carregar();
+  }
+
+  function Carregar() {
+    fetch('https://pokeapi.co/api/v2/pokemon/' + id)
+      .then((response) => response.json())
+      .then((data) => {
+        setPokemon(data);
+      });
+  }
+  if(pokemon.name){
+    return (
+      <div>
+        <button onClick={Carregar}>Carregar</button>
+        <Pokedex pokemon={pokemon} controle={{id, Reduzir, Adicionar}}/>
+      </div>
+    )
+  }
+  else{
+    return(
+    <button onClick={Carregar}>Carregar</button>  
+    )
+    
+  }
+  
 }
 
 export default App;
